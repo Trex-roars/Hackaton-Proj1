@@ -1,10 +1,12 @@
-import HeroSection from '@/components/hero-section'
 import React from 'react'
-
+import Loop from '@/components/loop'
+import  HeroSection  from '@/components/hero-section';
 const page = () => {
   return (
-    <HeroSection />
-
+    <div>
+      <HeroSection/>
+          <Loop/>
+    </div>
   )
 }
 
