@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FaLinkedin, FaGithub } from "react-icons/fa";
-import { ContainerScroll } from "./container-scroll-animation";
 
 type Testimonial = {
     quote: string;
