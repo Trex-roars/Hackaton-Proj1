@@ -2,6 +2,7 @@
 
 import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
 import React from "react";
+import { Boxes } from "../ui/background-boxes";
 
 const Loop = () => {
     const items = [
@@ -58,7 +59,7 @@ const Loop = () => {
         },
         {
             quote: "I’ve seen a significant increase in engagement since I started using this tool.",
-            name: "Nainsi sharma",
+            name: "Nainsi Sharma",
             title: "Pinterest",
             photo: "/loop/nainsi.jpeg",
         },
@@ -84,7 +85,7 @@ const Loop = () => {
             photo: "/loop/sriti.jpeg",
         },
         {
-            quote: "This platform has taken my social media management to the next level",
+            quote: "This platform has taken my social media management to the next level.",
             name: "Radha Raman",
             title: "Twitter",
             photo: "/loop/radha.jpeg",
@@ -92,15 +93,17 @@ const Loop = () => {
     ];
 
     return (
-        <main className="flex flex-col items-center justify-center min-h-screen bg-background text-foreground">
-            <div className="text-center mb-5 w-full max-w-4xl px-4">
+        <main className="relative flex flex-col items-center justify-center min-h-screen bg-background text-foreground overflow-hidden">
+            <Boxes className="absolute inset-0 z-0" />
+
+            <div className="relative z-10 text-center mb-5 w-full max-w-4xl px-4">
                 <h2 className="text-3xl font-bold text-foreground">Customer Testimonials</h2>
                 <p className="text-lg text-muted-foreground mt-2">
                     See what our users have to say about us
                 </p>
             </div>
 
-            <div className="w-full max-w-6xl px-4">
+            <div className="relative z-10 w-full max-w-6xl px-4">
                 <InfiniteMovingCards
                     items={items}
                     direction="left"
@@ -110,7 +113,7 @@ const Loop = () => {
                 />
             </div>
 
-            <div className="w-full max-w-6xl px-4">
+            <div className="relative z-10 w-full max-w-6xl px-4">
                 <InfiniteMovingCards
                     items={items2}
                     direction="right"
@@ -120,7 +123,7 @@ const Loop = () => {
                 />
             </div>
 
-            <div className="w-full max-w-6xl px-4">
+            <div className="relative z-10 w-full max-w-6xl px-4">
                 <InfiniteMovingCards
                     items={items3}
                     direction="left"
