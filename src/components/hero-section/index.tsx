@@ -31,9 +31,13 @@ const HomeSection = () => {
 
             {/* Enhanced Subheading - adjusted for better readability on mobile */}
             <p className="text-lg sm:text-xl md:text-2xl text-white/80 mb-8 sm:mb-12 font-light leading-relaxed max-w-xl">
-              Experience the next evolution of
-              <span className="font-semibold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent"> intelligent interactions </span>
-              powered by cutting-edge AI technology
+              Decode Your Audience Predict the
+              <span className="font-semibold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent"> Viral
+              </span>
+              <br></br>
+              Master
+              <span className="font-semibold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent"> Engagement </span>
+              powered by Gen AI
             </p>
 
             {/* Enhanced Interactive Buttons - improved mobile layout */}
