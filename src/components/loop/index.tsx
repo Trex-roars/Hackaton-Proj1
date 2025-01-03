@@ -7,60 +7,60 @@ const Loop = () => {
     const items = [
         {
             quote: "I love how quickly I can get detailed insights into my social media performance.",
-            name: "Archi",
+            name: "Abhijeet Kumar",
             title: "Instagram",
-            photo: "globe.svg",
+            photo: "/loop/abhi.jpeg",
         },
         {
             quote: "This tool has completely transformed the way I analyze my social media. So easy to use!",
             name: "Rohit",
             title: "Facebook",
-            photo: "next.svg",
+            photo: "/loop/rohit.jpeg",
         },
         {
             quote: "A game-changer for tracking engagement across all platforms in one place.",
-            name: "Steve Jobs",
+            name: "Manisha Chaudhary",
             title: "Twitter",
-            photo: "window.svg",
+            photo: "/loop/manisha.jpeg",
         },
         {
             quote: "The analytics are clear and actionable. It’s helped me improve my content strategy!",
-            name: "Steve Jobs",
+            name: "Somesh Biswal",
             title: "LinkedIn",
-            photo: "/path/to/photo4.jpg",
+            photo: "/loop/sanu.jpeg",
         },
     ];
 
     const items2 = [
         {
             quote: "I now understand my audience better than ever. This platform is a must-have.",
-            name: "Steve Jobs",
+            name: "Nisita Subramani",
             title: "Instagram",
-            photo: "/path/to/photo1.jpg",
+            photo: "/loop/nishita.jpeg",
         },
         {
             quote: "The real-time data has made decision-making so much easier and more effective.",
-            name: "Winston Churchill",
+            name: "Punit Kumar",
             title: "WhatsApp",
-            photo: "/path/to/photo2.jpg",
+            photo: "/loop/punit.jpeg",
         },
         {
             quote: "Incredible insights that have helped boost my social media presence.",
-            name: "Steve Jobs",
+            name: "Himant Yadav",
             title: "LinkedIn",
-            photo: "/path/to/photo3.jpg",
+            photo: "/loop/himant.jpeg",
         },
         {
             quote: "The dashboard is super user-friendly, and the reports are spot-on!",
-            name: "Steve Jobs",
+            name: "Kushagra Chaudhary",
             title: "Facebook",
-            photo: "/path/to/photo4.jpg",
+            photo: "/loop/kushagra.jpeg",
         },
         {
             quote: "I’ve seen a significant increase in engagement since I started using this tool.",
-            name: "Steve Jobs",
+            name: "Nainsi sharma",
             title: "Pinterest",
-            photo: "/path/to/photo4.jpg",
+            photo: "/loop/nainsi.jpeg",
         },
     ];
 
@@ -69,25 +69,25 @@ const Loop = () => {
             quote: "The detailed metrics help me fine-tune my social media strategy for better results.",
             name: "Subham Kumar",
             title: "Telegram",
-            photo: "/path/to/photo1.jpg",
+            photo: "/loop/subham.jpeg",
         },
         {
             quote: "This platform is a lifesaver for anyone serious about growing their social media!",
-            name: "Himant",
+            name: "Himant Yadav",
             title: "Discord",
-            photo: "/path/to/photo2.jpg",
+            photo: "/loop/himant.jpeg",
         },
         {
             quote: "The analytics are so thorough, I now feel confident in my social media decisions.",
-            name: "Steve Jobs",
+            name: "Sriti Sareen",
             title: "Snapchat",
-            photo: "/path/to/photo3.jpg",
+            photo: "/loop/sriti.jpeg",
         },
         {
             quote: "This platform has taken my social media management to the next level",
-            name: "Steve Jobs",
+            name: "Radha Raman",
             title: "Twitter",
-            photo: "/path/to/photo4.jpg",
+            photo: "/loop/radha.jpeg",
         },
     ];
 
