@@ -101,7 +101,7 @@ const Loop = () => {
                     {"Customer".split("").map((letter, index) => (
                         <span
                             key={index}
-                            className="inline-block transition-all duration-300 text-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-pink-500 hover:via-purple-500 hover:to-pink-500"
+                            className="inline-block transition-all duration-100 text-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-pink-500 hover:via-purple-500 hover:to-pink-500 hover:translate-y-[-5px] hover:scale-110"
                         >
                             {letter}
                         </span>
@@ -110,7 +110,7 @@ const Loop = () => {
                     {"Testimonials".split("").map((letter, index) => (
                         <span
                             key={index + "testimonial"}
-                            className="inline-block transition-all duration-300 text-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-pink-500 hover:via-purple-500 hover:to-pink-500"
+                            className="inline-block transition-all duration-100 text-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-pink-500 hover:via-purple-500 hover:to-pink-500 hover:translate-y-[-5px] hover:scale-110"
                         >
                             {letter}
                         </span>
