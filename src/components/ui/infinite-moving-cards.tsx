@@ -92,32 +92,32 @@ export const InfiniteMovingCards = ({
             >
                 {items.map((item, idx) => (
                     <li
-                        className="w-[250px] max-w-full relative rounded-lg border border-slate-700 px-4 py-3 md:w-[300px] bg-black text-white hover:scale-105 transition-transform duration-300"
+                        className="w-[350px] max-w-full relative rounded-lg border border-slate-700 px-6 py-5 md:w-[400px] bg-black text-white hover:scale-105 transition-transform duration-300"
                         style={{
                             background: "linear-gradient(180deg, var(--slate-800), var(--slate-900))",
-                            boxShadow: "rgba(152, 244, 254, 0.7) 0px 6px 24px -9px inset",
+                            boxShadow: "rgba(152, 244, 254, 0.7) 0px 8px 30px -10px inset",
                         }}
                         key={item.name}
                     >
                         <blockquote>
                             <div
                                 aria-hidden="true"
-                                className="user-select-none -z-1 pointer-events-none absolute -left-0.5 -top-0.5 h-[calc(100%_+_4px)] w-[calc(100%_+_4px)]"
+                                className="user-select-none -z-1 pointer-events-none absolute -left-1 -top-1 h-[calc(100%_+_8px)] w-[calc(100%_+_8px)]"
                             ></div>
-                            <span className="relative z-20 text-xs leading-[1.4] text-white font-bold">
+                            <span className="relative z-20 text-sm leading-[1.6] text-white font-bold">
                                 {item.quote}
                             </span>
-                            <div className="relative z-20 mt-4 flex flex-row items-center gap-3">
+                            <div className="relative z-20 mt-6 flex flex-row items-center gap-4">
                                 <img
                                     src={item.photo}
                                     alt={item.name}
-                                    className="w-10 h-10 rounded-full object-cover border border-gray-700"
+                                    className="w-14 h-14 rounded-full object-cover border border-gray-700"
                                 />
-                                <span className="flex flex-col gap-0.5">
-                                    <span className="text-xs leading-[1.4] text-gray-400 font-bold">
+                                <span className="flex flex-col gap-1">
+                                    <span className="text-sm leading-[1.6] text-gray-300 font-bold">
                                         {item.name}
                                     </span>
-                                    <span className="text-xs leading-[1.4] text-gray-400 font-normal">
+                                    <span className="text-sm leading-[1.6] text-gray-400 font-normal">
                                         {item.title}
                                     </span>
                                 </span>

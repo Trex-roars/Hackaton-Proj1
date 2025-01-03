@@ -97,13 +97,36 @@ const Loop = () => {
             <Boxes className="absolute inset-0 z-0" />
 
             <div className="relative z-10 text-center mb-5 w-full max-w-4xl px-4">
-                <h2 className="text-3xl font-bold text-foreground">Customer Testimonials</h2>
+                <h2 className="text-6xl font-bold text-white">
+                    {"Customer".split("").map((letter, index) => (
+                        <span
+                            key={index}
+                            className="inline-block transition-all duration-300 text-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-pink-500 hover:via-purple-500 hover:to-pink-500"
+                        >
+                            {letter}
+                        </span>
+                    ))}
+                    <span className="inline-block mx-1"></span> {/* Add gap here */}
+                    {"Testimonials".split("").map((letter, index) => (
+                        <span
+                            key={index + "testimonial"}
+                            className="inline-block transition-all duration-300 text-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-pink-500 hover:via-purple-500 hover:to-pink-500"
+                        >
+                            {letter}
+                        </span>
+                    ))}
+                </h2>
                 <p className="text-lg text-muted-foreground mt-2">
                     See what our users have to say about us
                 </p>
             </div>
 
-            <div className="relative z-10 w-full max-w-6xl px-4">
+
+
+
+
+
+            <div className="relative z-10 w-full max-w-7xl mx-auto">
                 <InfiniteMovingCards
                     items={items}
                     direction="left"
@@ -113,25 +136,26 @@ const Loop = () => {
                 />
             </div>
 
-            <div className="relative z-10 w-full max-w-6xl px-4">
+            <div className="relative z-10 w-full max-w-7xl mx-auto">
                 <InfiniteMovingCards
                     items={items2}
                     direction="right"
                     speed="normal"
                     pauseOnHover={true}
-                    className="mt-4"
+                    className="mt-1"
                 />
             </div>
 
-            <div className="relative z-10 w-full max-w-6xl px-4">
+            <div className="relative z-10 w-full max-w-7xl mx-auto">
                 <InfiniteMovingCards
                     items={items3}
                     direction="left"
                     speed="normal"
                     pauseOnHover={true}
-                    className="mt-4"
+                    className="mt-1"
                 />
             </div>
+
         </main>
     );
 };
