@@ -94,7 +94,7 @@ const Loop = () => {
 
     return (
         <main className="relative flex flex-col items-center justify-center min-h-screen bg-background text-foreground overflow-hidden">
-            <Boxes className="absolute inset-0 z-0" />
+            {/* <Boxes className="absolute inset-0 z-0" /> */}
 
             <div className="relative z-10 text-center mb-5 w-full max-w-4xl px-4">
                 <h2 className="text-6xl font-bold text-white">
@@ -120,11 +120,6 @@ const Loop = () => {
                     See what our users have to say about us
                 </p>
             </div>
-
-
-
-
-
 
             <div className="relative z-10 w-full max-w-7xl mx-auto">
                 <InfiniteMovingCards
