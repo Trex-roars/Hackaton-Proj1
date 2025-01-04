@@ -1,6 +1,7 @@
 "use client";
 
 import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
+import { motion } from "framer-motion";
 
 const Loop = () => {
     const items = [
@@ -92,34 +93,28 @@ const Loop = () => {
 
     return (
         <main className="relative flex flex-col items-center justify-center min-h-screen bg-background text-foreground overflow-hidden">
-            {/* <Boxes className="absolute inset-0 z-0" /> */}
-
-            <div className="relative z-10 text-center mb-5 w-full max-w-4xl px-4">
-                <h2 className="text-6xl font-bold text-white">
-                    {"Customer".split("").map((letter, index) => (
-                        <span
-                            key={index}
-                            className="inline-block transition-all duration-100 text-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-pink-500 hover:via-purple-500 hover:to-pink-500 hover:translate-y-[-5px] hover:scale-110"
-                        >
-                            {letter}
-                        </span>
-                    ))}
-                    <span className="inline-block mx-1"></span> {/* Add gap here */}
-                    {"Testimonials".split("").map((letter, index) => (
-                        <span
-                            key={index + "testimonial"}
-                            className="inline-block transition-all duration-100 text-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-pink-500 hover:via-purple-500 hover:to-pink-500 hover:translate-y-[-5px] hover:scale-110"
-                        >
-                            {letter}
-                        </span>
-                    ))}
+            {/* Animated Header */}
+            <motion.div
+                className="relative z-10 text-center mb-5 w-full max-w-4xl px-4"
+                initial={{ opacity: 0, y: -50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1 }}
+            >
+                <h2 className="text-5xl font-extrabold text-gray-800 mb-4">
+                    <span className="text-primary">Customer</span> <span>Testimonials</span>
                 </h2>
                 <p className="text-lg text-muted-foreground mt-2">
                     See what our users have to say about us
                 </p>
-            </div>
+            </motion.div>
 
-            <div className="relative z-10 w-full max-w-7xl mx-auto">
+            {/* First Card Set with Motion */}
+            <motion.div
+                className="relative z-10 w-full max-w-7xl mx-auto"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3, duration: 1 }}
+            >
                 <InfiniteMovingCards
                     items={items}
                     direction="left"
@@ -127,28 +122,39 @@ const Loop = () => {
                     pauseOnHover={true}
                     className="mt-4"
                 />
-            </div>
+            </motion.div>
 
-            <div className="relative z-10 w-full max-w-7xl mx-auto">
+            {/* Second Card Set with Motion */}
+            <motion.div
+                className="relative z-10 w-full max-w-7xl mx-auto"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6, duration: 1 }}
+            >
                 <InfiniteMovingCards
                     items={items2}
                     direction="right"
                     speed="normal"
                     pauseOnHover={true}
-                    className="mt-1"
+                    className="mt-10"
                 />
-            </div>
+            </motion.div>
 
-            <div className="relative z-10 w-full max-w-7xl mx-auto">
+            {/* Third Card Set with Motion */}
+            <motion.div
+                className="relative z-10 w-full max-w-7xl mx-auto"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.9, duration: 1 }}
+            >
                 <InfiniteMovingCards
                     items={items3}
                     direction="left"
                     speed="normal"
                     pauseOnHover={true}
-                    className="mt-1"
+                    className="mt-10"
                 />
-            </div>
-
+            </motion.div>
         </main>
     );
 };
