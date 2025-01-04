@@ -60,7 +60,7 @@ export function Features() {
             initial="hidden"
             animate="show"
             variants={container}
-            className="max-w-8xl mx-auto px-8 py-24 relative"
+            className="max-w-8xl mx-auto px-8 pt-20 relative"
         >
             <motion.div
                 className="text-center mb-20 relative z-10"
@@ -71,7 +71,7 @@ export function Features() {
                     whileHover={{ scale: 1.05 }}
                 >
                     <span className="text-sm font-light text-zinc-400 tracking-[0.3em] uppercase relative z-10">
-                        Discover What's Possible
+                        Discover What&apos;s Possible
                     </span>
                     <motion.div
                         className="absolute inset-0 bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-pink-500/20 blur-lg"

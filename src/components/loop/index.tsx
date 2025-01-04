@@ -1,9 +1,12 @@
 "use client";
 
+import React, { useState } from 'react';
 import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
 import { motion } from "framer-motion";
 
 const Loop = () => {
+    const [hoveredIndex, setHoveredIndex] = useState(null);
+
     const items = [
         {
             quote: "I love how quickly I can get detailed insights into my social media performance.",
@@ -24,7 +27,7 @@ const Loop = () => {
             photo: "/loop/manisha.jpeg",
         },
         {
-            quote: "The analytics are clear and actionable. It’s helped me improve my content strategy!",
+            quote: "The analytics are clear and actionable. It's helped me improve my content strategy!",
             name: "Somesh Biswal",
             title: "LinkedIn",
             photo: "/loop/sanu.jpeg",
@@ -57,7 +60,7 @@ const Loop = () => {
             photo: "/loop/kushagra.jpeg",
         },
         {
-            quote: "I’ve seen a significant increase in engagement since I started using this tool.",
+            quote: "I've seen a significant increase in engagement since I started using this tool.",
             name: "Nainsi Sharma",
             title: "Pinterest",
             photo: "/loop/nainsi.jpeg",
@@ -91,29 +94,92 @@ const Loop = () => {
         },
     ];
 
+    const letterContainer = {
+        hidden: { opacity: 0 },
+        show: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.05,
+                delayChildren: 0.3
+            }
+        }
+    };
+
+    const letterAnimation = {
+        hidden: { y: 20, opacity: 0 },
+        show: {
+            y: 0,
+            opacity: 1,
+            transition: {
+                type: "spring",
+                stiffness: 200,
+                damping: 10
+            }
+        }
+    };
+
     return (
-        <main className="relative flex flex-col items-center justify-center min-h-screen bg-background text-foreground overflow-hidden">
+        <main className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden ">
             {/* Animated Header */}
             <motion.div
-                className="relative z-10 text-center mb-5 w-full max-w-4xl px-4"
+                className="relative z-10 text-center mb-16 w-full max-w-4xl px-4"
                 initial={{ opacity: 0, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1 }}
             >
-                <h2 className="text-5xl font-extrabold text-gray-800 mb-4">
-                    <span className="text-primary">Customer</span> <span>Testimonials</span>
-                </h2>
-                <p className="text-lg text-muted-foreground mt-2">
-                    See what our users have to say about us
-                </p>
+                <motion.div
+                    variants={letterContainer}
+                    initial="hidden"
+                    animate="show"
+                    className="mb-6"
+                >
+                    <h2 className="text-6xl font-bold mb-2">
+                        {"Voice of Our Users".split("").map((letter, index) => (
+                            <motion.span
+                                key={index}
+                                variants={letterAnimation}
+                                whileHover={{
+                                    y: -8,
+                                    scale: 1.1,
+                                    color: index % 2 ? '#ec4899' : '#a855f7',
+                                    transition: {
+                                        type: "spring",
+                                        stiffness: 400,
+                                        damping: 10
+                                    }
+                                }}
+                                className="inline-block transition-all duration-200 text-white cursor-pointer"
+                            >
+                                {letter === " " ? "\u00A0" : letter}
+                            </motion.span>
+                        ))}
+                    </h2>
+                    <motion.div
+                        className="h-px bg-gradient-to-r from-transparent via-zinc-700 to-transparent w-full mt-4"
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{ delay: 1, duration: 1 }}
+                    />
+                </motion.div>
+
+                <motion.p
+                    className="text-xl text-zinc-400 mt-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 0.8 }}
+                >
+                    Discover what our community has achieved with our platform
+                </motion.p>
             </motion.div>
 
-            {/* First Card Set with Motion */}
+            {/* First Card Set */}
             <motion.div
                 className="relative z-10 w-full max-w-7xl mx-auto"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3, duration: 1 }}
+                initial={{ opacity: 0, x: -100 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3, duration: 0.8 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
             >
                 <InfiniteMovingCards
                     items={items}
@@ -124,12 +190,14 @@ const Loop = () => {
                 />
             </motion.div>
 
-            {/* Second Card Set with Motion */}
+            {/* Second Card Set */}
             <motion.div
                 className="relative z-10 w-full max-w-7xl mx-auto"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6, duration: 1 }}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
             >
                 <InfiniteMovingCards
                     items={items2}
@@ -140,12 +208,14 @@ const Loop = () => {
                 />
             </motion.div>
 
-            {/* Third Card Set with Motion */}
+            {/* Third Card Set */}
             <motion.div
                 className="relative z-10 w-full max-w-7xl mx-auto"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.9, duration: 1 }}
+                initial={{ opacity: 0, x: -100 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.9, duration: 0.8 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
             >
                 <InfiniteMovingCards
                     items={items3}
@@ -155,6 +225,14 @@ const Loop = () => {
                     className="mt-10"
                 />
             </motion.div>
+
+            {/* Bottom Decorative Line */}
+            <motion.div
+                className="w-24 h-1 bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 mt-16"
+                initial={{ width: 0 }}
+                animate={{ width: '6rem' }}
+                transition={{ delay: 1.2, duration: 0.8 }}
+            />
         </main>
     );
 };
