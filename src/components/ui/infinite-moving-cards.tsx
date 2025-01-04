@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { cn } from "@/lib/utils";
@@ -92,12 +93,12 @@ export const InfiniteMovingCards = ({
             >
                 {items.map((item, idx) => (
                     <li
-                        className="w-[350px] max-w-full relative rounded-lg border border-slate-700 px-6 py-5 md:w-[400px] bg-black text-white hover:scale-105 transition-transform duration-300"
+                        className="w-[300px] max-w-full relative rounded-lg border border-slate-700 px-6 py-5 md:w-[400px] text-white hover:scale-105 transition-transform duration-300"
                         style={{
-                            background: "linear-gradient(180deg, var(--slate-800), var(--slate-900))",
-                            boxShadow: "rgba(152, 244, 254, 0.7) 0px 8px 30px -10px inset",
+                            boxShadow: "0px 2px 4px rgba(255, 255, 255, 0.1), 0px 0px 10px rgba(255, 255, 255, 0.05)",
                         }}
                         key={item.name}
+
                     >
                         <blockquote>
                             <div
