@@ -1,8 +1,6 @@
 "use client";
 
 import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
-import React from "react";
-import { Boxes } from "../ui/background-boxes";
 
 const Loop = () => {
     const items = [
