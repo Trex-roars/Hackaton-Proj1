@@ -6,11 +6,18 @@ import { Teamates } from '@/components/teamates';
 import { Features } from '@/components/feature';
 const page = () => {
   return (
-    <div>
-          <HeroSection />
-          <Features />
-          <Loop />
-          <Teamates/>
+    <div className='flex flex-col justify-center items-center'>
+      <HeroSection />
+
+      <div className='min-h-screen flex p-20 justify-center items-center '>
+        <Features />
+         </div>
+      <div className='min-h-screen flex p-20 justify-center items-center '>
+        <Loop />
+      </div>
+      <div className='min-h-screen flex justify-center items-center '>
+        <Teamates />
+      </div>
           <Footer/>
     </div>
   )
