@@ -1,3 +1,25 @@
+export const globeConfig = {
+  pointSize: 4,
+  globeColor: "#062056",
+  showAtmosphere: true,
+  atmosphereColor: "#FFFFFF",
+  atmosphereAltitude: 0.18, // Increased for more visible atmosphere
+  emissive: "#062056",
+  emissiveIntensity: 0.25, // Increased for more glow
+  shininess: 0.9,
+  polygonColor: "rgba(255,255,255,0.7)",
+  ambientLight: "#38bdf8",
+  directionalLeftLight: "#ffffff",
+  directionalTopLight: "#ffffff",
+  pointLight: "#ffffff",
+  arcTime: 1500, // Increased for smoother animation
+  arcLength: 0.9,
+  rings: 1,
+  maxRings: 3,
+  initialPosition: { lat: 22.3193, lng: 114.1694 },
+  autoRotate: true,
+  autoRotateSpeed: 0.5,
+};
 const colors = ["#06b6d4", "#3b82f6", "#6366f1"];
 export const sampleArcs = [
   {
@@ -360,5 +382,4 @@ export const sampleArcs = [
     arcAlt: 0.3,
     color: colors[Math.floor(Math.random() * (colors.length - 1))],
   },
-  // Add more arcs as needed from the original data
 ];
