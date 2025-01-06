@@ -1,26 +1,26 @@
-import React from 'react'
-import Loop from '@/components/loop'
-import  HeroSection  from '@/components/hero-section';
-import { Footer } from '@/components/globals/footer/footer';
-import { Teamates } from '@/components/teamates';
-import { Features } from '@/components/feature';
+import React from "react";
+import Loop from "@/components/loop";
+import HeroSection from "@/components/hero-section";
+import { Footer } from "@/components/globals/footer/footer";
+import { Teamates } from "@/components/teamates";
+import { Features } from "@/components/feature";
 const page = () => {
   return (
-    <div className='flex flex-col justify-center items-center'>
+    <div className="flex flex-col justify-center items-center">
       <HeroSection />
 
-      <div className='min-h-screen flex p-20 justify-center items-center '>
+      <div className="min-h-screen flex p-20 justify-center items-center ">
         <Features />
-         </div>
-      <div className='min-h-screen flex p-20 justify-center items-center '>
+      </div>
+      <div className="min-h-screen flex p-20 justify-center items-center ">
         <Loop />
       </div>
-      <div className='min-h-screen flex justify-center items-center '>
+      <div className="min-h-screen flex justify-center items-center ">
         <Teamates />
       </div>
-          <Footer/>
+      <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default page;
