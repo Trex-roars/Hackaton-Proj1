@@ -8,26 +8,23 @@ import {
   FaLinkedin,
   FaFacebook,
   FaInstagram,
-  FaYoutube,
-  FaTiktok,
-  FaSnapchat,
-  FaReddit,
-  FaPinterest,
 } from "react-icons/fa";
 import dynamic from "next/dynamic";
-import { sampleArcs } from "./sample-arcs";
+import { sampleArcs, globeConfig } from "./sample-arcs";
 
 const World = dynamic(() => import("../ui/globe").then((m) => m.World), {
   ssr: false,
-  loading: () => <div className="w-full h-full bg-black" />,
 });
 
-function DashboardWithGlobe() {
+export default function DashboardWithGlobe() {
   const [inputValue, setInputValue] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const [messages, setMessages] = useState([]);
   const [showGlobe, setShowGlobe] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [globeScale, setGlobeScale] = useState(1);
   const messagesEndRef = useRef(null);
+  const globeContainerRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -37,127 +34,162 @@ function DashboardWithGlobe() {
     scrollToBottom();
   }, [messages]);
 
-  const globeConfig = {
-    pointSize: 4,
-    globeColor: "#062056",
-    showAtmosphere: true,
-    atmosphereColor: "#FFFFFF",
-    atmosphereAltitude: 0.1,
-    emissive: "#062056",
-    emissiveIntensity: 0.1,
-    shininess: 0.9,
-    polygonColor: "rgba(255,255,255,0.7)",
-    ambientLight: "#38bdf8",
-    directionalLeftLight: "#ffffff",
-    directionalTopLight: "#ffffff",
-    pointLight: "#ffffff",
-    arcTime: 1000,
-    arcLength: 0.9,
-    rings: 1,
-    maxRings: 3,
-    initialPosition: { lat: 22.3193, lng: 114.1694 },
-    autoRotate: true,
-    autoRotateSpeed: 0.5,
-  };
+  // Modified globe animation with more subtle scaling
+  useEffect(() => {
+    setGlobeScale(1);
+    const interval = setInterval(() => {
+      setGlobeScale((scale) => (scale === 1 ? 1.02 : 1)); // Reduced scale factor
+    }, 4000); // Increased interval
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSubmit = () => {
     if (!inputValue.trim()) return;
 
+    setIsAnimating(true);
     setIsExpanded(true);
-    // Add user message
-    setMessages((prev) => [...prev, { type: "user", content: inputValue }]);
 
-    // Simulate API response
+    // Modified globe transition
+    setGlobeScale(1.05); // Reduced scale
+    setTimeout(() => setGlobeScale(0.9), 300);
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        type: "user",
+        content: inputValue,
+        animate: true,
+      },
+    ]);
+
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
         {
           type: "agent",
           content: `Analysis for "${inputValue}": Here's what I found about your social media query. This is a simulated response that would come from your API with relevant insights and recommendations.`,
+          animate: true,
+          typing: true,
         },
       ]);
     }, 1000);
 
     setInputValue("");
-    // Fade out globe after a delay
-    setTimeout(() => setShowGlobe(false), 500);
+    setTimeout(() => {
+      setShowGlobe(false);
+      setIsAnimating(false);
+    }, 800);
   };
 
   const handleReset = () => {
-    setIsExpanded(false);
-    setInputValue("");
-    setMessages([]);
-    setShowGlobe(true);
+    setIsAnimating(true);
+    setGlobeScale(1);
+    setTimeout(() => {
+      setIsExpanded(false);
+      setInputValue("");
+      setMessages([]);
+      setShowGlobe(true);
+      setIsAnimating(false);
+    }, 300);
   };
 
   return (
-    <div className="relative min-h-screen text-white overflow-hidden">
-      {/* Globe Background */}
+    <div className="relative mt-20 max-h-screen text-white overflow-hidden">
+      {/* Modified Globe Container */}
       <div
-        className={`fixed inset-0 z-0 transition-opacity duration-1000 ${
+        ref={globeContainerRef}
+        className={`absolute flex justify-center items-center inset-0 z-0 transition-all duration-1000 ${
           showGlobe ? "opacity-100" : "opacity-0"
         }`}
+        style={{
+          transform: `scale(${globeScale})`,
+          transition: "transform 0.8s ease-out",
+        }}
       >
-        <World data={sampleArcs} globeConfig={globeConfig} />
+        <div className="h-full max-w-[800px] min-w-[800px] aspect-square relative">
+          <div
+            className="absolute inset-0"
+            style={{
+              width: "100%",
+              height: "100%",
+              transform: `scale(${globeScale})`,
+              transition: "transform 0.8s ease-out",
+            }}
+          >
+            <World data={sampleArcs} globeConfig={globeConfig} />
+          </div>
+        </div>
       </div>
 
-      {/* Semi-transparent overlay */}
-      <div className="fixed inset-0 bg-black/40 z-10" />
+      <div
+        className={`fixed inset-0  transition-all duration-500 ${
+          isExpanded ? "bg-black/40" : "bg-black/20"
+        } z-10`}
+      />
 
-      {/* Dashboard Content */}
+      {/* Main Content */}
       <div className="relative z-20">
-        {/* Main Content with Fade Transitions */}
+        {/* Enhanced Introduction Section */}
         <div
-          className={`transition-all duration-500 ${
-            isExpanded ? "opacity-0 pointer-events-none" : "opacity-100"
+          className={`transition-all duration-500 ease-out transform ${
+            isExpanded
+              ? "opacity-0 -translate-y-20 pointer-events-none"
+              : "opacity-100 translate-y-0 hover:scale-105"
           }`}
         >
-          {/* Introduction Section */}
+          {/* Animated Header Badge */}
           <div className="flex justify-center mt-8">
-            <div className="flex items-center space-x-4 p-4 bg-black/30 border border-gray-700 rounded-full shadow-lg">
-              <Twitter className="w-5 h-5 text-blue-400 hover:text-white transition-all duration-200" />
-              <span className="text-sm text-gray-300">
+            <div className="flex items-center space-x-4 p-4 bg-black/30 border border-gray-700 rounded-full shadow-lg hover:shadow-blue-500/20 hover:bg-black/40 transition-all duration-300 group">
+              <Twitter className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform duration-300" />
+              <span className="text-sm text-gray-300 group-hover:text-white transition-colors duration-300">
                 Introducing{" "}
-                <span className="text-yellow-500 font-semibold">TheAgent</span>:
-                Your AI-Powered Social Media Assistant
+                <span className="text-yellow-500 font-semibold animate-pulse">
+                  TheAgent
+                </span>
               </span>
             </div>
           </div>
 
-          {/* Title and Description */}
+          {/* Enhanced Title Section */}
           <main className="max-w-4xl mx-auto px-6 pt-16 text-center">
-            <h1 className="text-5xl font-extrabold mb-6 leading-tight animate-pulse">
+            <h1 className="text-5xl font-extrabold mb-6 leading-tight bg-gradient-to-r from-white via-blue-400 to-purple-500 bg-clip-text text-transparent animate-gradient">
               What insights are you looking for?
             </h1>
-            <p className="text-gray-300 text-lg mb-12">
+            <p className="text-gray-300 text-lg mb-12 hover:text-white transition-colors duration-300">
               Analyze, strategize, and optimize your social media presence with
               ease.
             </p>
           </main>
         </div>
 
-        {/* Chat Interface */}
+        {/* Enhanced Chat Interface */}
         <div
           className={`transition-all duration-500 ease-in-out ${
             isExpanded
-              ? "fixed top-0 left-0 right-0 bottom-0 flex flex-col p-6"
+              ? "fixed inset-0 flex flex-col p-4 md:p-6 max-w-2xl mx-auto"
               : "max-w-4xl mx-auto px-6"
           }`}
         >
-          {/* Messages Area */}
+          {/* Messages Area with improved animations */}
           {isExpanded && (
-            <div className="flex-1 overflow-y-auto mb-6 space-y-4">
+            <div className="flex-1 overflow-y-auto mb-4 space-y-4 scrollbar-thin scrollbar-thumb-blue-600/50 scrollbar-track-transparent">
               {messages.map((message, index) => (
                 <div
                   key={index}
-                  className={`flex ${message.type === "user" ? "justify-end" : "justify-start"} animate-fadeIn`}
+                  className={`flex ${
+                    message.type === "user" ? "justify-end" : "justify-start"
+                  }`}
                 >
                   <div
-                    className={`max-w-[80%] p-4 rounded-lg ${
+                    className={`max-w-[80%] p-4 rounded-lg transform transition-all duration-500 ${
+                      message.animate ? "animate-message-slide-in" : ""
+                    } ${
                       message.type === "user"
-                        ? "bg-blue-600/60 backdrop-blur-sm ml-4"
-                        : "bg-gray-800/60 backdrop-blur-sm mr-4"
-                    }`}
+                        ? "bg-blue-600/60 backdrop-blur-sm ml-4 hover:bg-blue-500/60"
+                        : "bg-gray-800/60 backdrop-blur-sm mr-4 hover:bg-gray-700/60"
+                    } ${
+                      message.typing ? "animate-typing" : ""
+                    } hover:scale-102 hover:shadow-lg transition-all duration-300`}
                   >
                     {message.content}
                   </div>
@@ -167,33 +199,33 @@ function DashboardWithGlobe() {
             </div>
           )}
 
-          {/* Input Area */}
+          {/* Enhanced Input Area */}
           <div className={`${isExpanded ? "mt-auto" : ""}`}>
-            <div className="bg-gray-800/60 backdrop-blur-sm rounded-lg p-3 shadow-md">
+            <div className="bg-gray-800/60 backdrop-blur-sm rounded-lg p-4 shadow-lg border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300">
               <div className="flex items-center space-x-3">
                 <input
                   type="text"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   placeholder="Ask TheAgent your social media questions..."
-                  className="flex-1 bg-transparent outline-none text-lg placeholder-gray-500 text-white"
+                  className="flex-1 bg-transparent outline-none text-lg placeholder-gray-500 text-white focus:placeholder-blue-400 transition-all duration-300"
                   onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
                 />
                 <div className="flex items-center space-x-3 text-gray-400">
                   {isExpanded ? (
                     <>
                       <Send
-                        className="w-5 h-5 hover:text-blue-500 cursor-pointer transition-all duration-200"
+                        className="w-6 h-6 hover:text-blue-500 cursor-pointer transition-all duration-300 transform hover:scale-110 hover:rotate-12"
                         onClick={handleSubmit}
                       />
                       <X
-                        className="w-5 h-5 hover:text-red-500 cursor-pointer transition-all duration-200"
+                        className="w-6 h-6 hover:text-red-500 cursor-pointer transition-all duration-300 transform hover:scale-110 hover:rotate-90"
                         onClick={handleReset}
                       />
                     </>
                   ) : (
                     <Sparkles
-                      className="w-5 h-5 hover:text-yellow-500 cursor-pointer transition-all duration-200"
+                      className="w-6 h-6 hover:text-yellow-500 cursor-pointer transition-all duration-300 transform hover:scale-110 animate-pulse"
                       onClick={handleSubmit}
                     />
                   )}
@@ -203,13 +235,15 @@ function DashboardWithGlobe() {
           </div>
         </div>
 
-        {/* Quick Actions and Footer with Fade Transition */}
+        {/* Quick Actions and Footer with enhanced animations */}
         <div
-          className={`transition-all duration-500 ${
-            isExpanded ? "opacity-0 pointer-events-none" : "opacity-100"
+          className={`transition-all duration-500 transform ${
+            isExpanded
+              ? "opacity-0 translate-y-10 pointer-events-none"
+              : "opacity-100 translate-y-0"
           }`}
         >
-          {/* Quick Actions */}
+          {/* Enhanced Quick Actions */}
           <div className="max-w-4xl mx-auto px-6">
             <div className="flex flex-wrap justify-center gap-4 mb-12">
               {[
@@ -219,10 +253,16 @@ function DashboardWithGlobe() {
                 "Optimize posting schedules",
                 "Compare competitor metrics",
                 "Generate campaign reports",
-              ].map((text) => (
+              ].map((text, index) => (
                 <button
                   key={text}
-                  className="px-6 py-3 bg-black/50 backdrop-blur-sm rounded-full text-gray-200 hover:text-white hover:bg-black/70 transition-all duration-200 shadow-md"
+                  style={{
+                    animationDelay: `${index * 100}ms`,
+                  }}
+                  className="px-6 py-3 bg-black/50 backdrop-blur-sm rounded-full text-gray-200
+                    hover:text-white hover:bg-blue-900/50 transition-all duration-300
+                    shadow-md hover:shadow-blue-500/20 transform hover:-translate-y-1
+                    hover:scale-105 animate-fade-in-up"
                   onClick={() => {
                     setInputValue(text);
                     handleSubmit();
@@ -233,18 +273,35 @@ function DashboardWithGlobe() {
               ))}
             </div>
 
-            {/* Social Media Icons */}
-            <div className="flex justify-center space-x-8 mb-12">
+            {/* Enhanced Social Media Icons */}
+            <div className="flex justify-center space-x-8">
               {[
-                { icon: <FaTwitter className="w-10 h-10 text-blue-500" /> },
-                { icon: <FaGithub className="w-10 h-10 text-gray-400" /> },
-                { icon: <FaLinkedin className="w-10 h-10 text-blue-600" /> },
-                { icon: <FaFacebook className="w-10 h-10 text-blue-700" /> },
-                { icon: <FaInstagram className="w-10 h-10 text-pink-500" /> },
+                {
+                  icon: <FaTwitter className="w-10 h-10" />,
+                  color: "text-blue-500",
+                },
+                {
+                  icon: <FaGithub className="w-10 h-10" />,
+                  color: "text-gray-400",
+                },
+                {
+                  icon: <FaLinkedin className="w-10 h-10" />,
+                  color: "text-blue-600",
+                },
+                {
+                  icon: <FaFacebook className="w-10 h-10" />,
+                  color: "text-blue-700",
+                },
+                {
+                  icon: <FaInstagram className="w-10 h-10" />,
+                  color: "text-pink-500",
+                },
               ].map((social, index) => (
                 <div
                   key={index}
-                  className="text-gray-400 hover:text-white transition-all duration-200"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                  className={`${social.color} hover:text-white transition-all duration-300
+                    transform hover:scale-125 hover:rotate-6 animate-bounce-in cursor-pointer`}
                 >
                   {social.icon}
                 </div>
@@ -252,32 +309,11 @@ function DashboardWithGlobe() {
             </div>
           </div>
 
-          {/* Footer */}
-          <footer className="mt-7 p-6 flex justify-between items-center text-gray-400 border-t border-gray-800 bg-black/40 backdrop-blur-sm">
-            <div className="flex items-center space-x-4">
-              <Twitter className="w-5 h-5 hover:text-blue-400 transition-all duration-200" />
-              <Github className="w-5 h-5 hover:text-gray-200 transition-all duration-200" />
-            </div>
-            <div className="flex items-center space-x-4 text-sm">
-              <a href="#" className="hover:text-white">
-                Help Center
-              </a>
-              <span>•</span>
-              <a href="#" className="hover:text-white">
-                Terms
-              </a>
-              <span>•</span>
-              <a href="#" className="hover:text-white">
-                Privacy
-              </a>
-              <span>•</span>
-              <span className="flex items-center">TheAGENT</span>
-            </div>
-          </footer>
+          {/* Enhanced Footer */}
         </div>
       </div>
     </div>
   );
 }
 
-export default DashboardWithGlobe;
+// Add these custom animations to your global CSS or tailwind.config.js
