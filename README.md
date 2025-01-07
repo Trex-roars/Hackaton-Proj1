@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+### Prompt 1:
 
-## Getting Started
+    `Profile Data:
+    Bio: 7
+    Followers: 329
+    Following: 178
 
-First, run the development server:
+    Posts Data:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+    Post 1:
+    Type: image
+    Likes: NaN
+    Hashtags:
+    Posted: 7/2/2024
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+    Post 2:
+    Type: image
+    Likes: NaN
+    Hashtags:
+    Posted: 6/27/2024
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+    Post 3:
+    Type: image
+    Likes: NaN
+    Hashtags: #motivation, #reels, #gymbro
+    Posted: 6/22/2024
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+    Post 4:
+    Type: image
+    Likes: NaN
+    Hashtags:
+    Posted: 12/9/2023
 
-## Learn More
+    Post 5:
+    Type: image
+    Likes: NaN
+    Hashtags: #powerlifting, #fitness, #bodybuilding, #gym, #deadlift, #squat, #workout, #weightlifting, #strength, #crossfit, #motivation, #benchpress, #strongman, #fitnessmotivation, #training, #strong, #bench, #powerlifter, #gymlife, #squats, #fit, #strengthtraining, #fitfam, #gymmotivation, #muscle, #power, #gains, #personaltrainer, #powerbuilding, #powerliftingmotivation
+    Posted: 11/6/2023
 
-To learn more about Next.js, take a look at the following resources:
+    Post 6:
+    Type: image
+    Likes: NaN
+    Hashtags: #gymmotivation, #instagram, #feed, #instafeed, #king, #cute, #power, #positivity
+    Posted: 10/8/2023
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+    Post 7:
+    Type: image
+    Likes: NaN
+    Hashtags: #gym, #cute, #love, #instagood, #instagram, #fitnessmodel, #model
+    Posted: 9/27/2023`
