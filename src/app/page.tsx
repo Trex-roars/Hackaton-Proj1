@@ -4,6 +4,7 @@ import HeroSection from "@/components/hero-section";
 import { Footer } from "@/components/globals/footer/footer";
 import { Teamates } from "@/components/teamates";
 import { Features } from "@/components/feature";
+import Test from "@/components/loop/test";
 const page = () => {
   return (
     <div className="flex flex-col justify-center items-center">
@@ -18,6 +19,7 @@ const page = () => {
       <div className="min-h-screen flex justify-center items-center ">
         <Teamates />
       </div>
+      <Test />
       <Footer />
     </div>
   );
