@@ -1,305 +1,430 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { Color, Scene, Fog, PerspectiveCamera, Vector3 } from "three";
-import ThreeGlobe from "three-globe";
-import { useThree, Object3DNode, Canvas, extend } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
-import countries from "@/components/Dashboard/globe.json";
-declare module "@react-three/fiber" {
-  interface ThreeElements {
-    threeGlobe: Object3DNode<ThreeGlobe, typeof ThreeGlobe>;
-  }
-}
 
-extend({ ThreeGlobe });
+import React, { useEffect, useRef, useState, useMemo } from "react";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-const RING_PROPAGATION_SPEED = 3;
-const aspect = 1.2;
-const cameraZ = 300;
+const Globe = ({ width = 800, height = 800 }) => {
+  const containerRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAutoRotate, setIsAutoRotate] = useState(true);
+  const [selectedCity, setSelectedCity] = useState(null);
 
-type Position = {
-  order: number;
-  startLat: number;
-  startLng: number;
-  endLat: number;
-  endLng: number;
-  arcAlt: number;
-  color: string;
-};
+  // Enhanced star positions with varying sizes
+  const starPositions = useMemo(() => {
+    const positions = [];
+    const sizes = [];
+    const colors = [];
 
-export type GlobeConfig = {
-  pointSize?: number;
-  globeColor?: string;
-  showAtmosphere?: boolean;
-  atmosphereColor?: string;
-  atmosphereAltitude?: number;
-  emissive?: string;
-  emissiveIntensity?: number;
-  shininess?: number;
-  polygonColor?: string;
-  ambientLight?: string;
-  directionalLeftLight?: string;
-  directionalTopLight?: string;
-  pointLight?: string;
-  arcTime?: number;
-  arcLength?: number;
-  rings?: number;
-  maxRings?: number;
-  initialPosition?: {
-    lat: number;
-    lng: number;
-  };
-  autoRotate?: boolean;
-  autoRotateSpeed?: number;
-};
+    for (let i = 0; i < 3000; i++) {
+      const x = (Math.random() - 0.5) * 2000;
+      const y = (Math.random() - 0.5) * 2000;
+      const z = (Math.random() - 0.5) * 2000;
+      positions.push(x, y, z);
 
-interface WorldProps {
-  globeConfig: GlobeConfig;
-  data: Position[];
-}
+      // Varying star sizes
+      sizes.push(Math.random() * 2);
 
-let numbersOfRings = [0];
-
-export function Globe({ globeConfig, data }: WorldProps) {
-  const [globeData, setGlobeData] = useState<
-    | {
-        size: number;
-        order: number;
-        color: (t: number) => string;
-        lat: number;
-        lng: number;
-      }[]
-    | null
-  >(null);
-
-  const globeRef = useRef<ThreeGlobe | null>(null);
-
-  const defaultProps = {
-    pointSize: 1,
-    atmosphereColor: "#ffffff",
-    showAtmosphere: true,
-    atmosphereAltitude: 0.1,
-    polygonColor: "rgba(255,255,255,0.7)",
-    globeColor: "#1d072e",
-    emissive: "#000000",
-    emissiveIntensity: 0.1,
-    shininess: 0.9,
-    arcTime: 2000,
-    arcLength: 0.9,
-    rings: 1,
-    maxRings: 3,
-    ...globeConfig,
-  };
-
-  useEffect(() => {
-    if (globeRef.current) {
-      _buildData();
-      _buildMaterial();
+      // Random star colors (white to blue)
+      const color = new THREE.Color();
+      color.setHSL(0.6, Math.random() * 0.3, 0.9);
+      colors.push(color.r, color.g, color.b);
     }
-  }, [globeRef.current]);
 
-  const _buildMaterial = () => {
-    if (!globeRef.current) return;
-
-    const globeMaterial = globeRef.current.globeMaterial() as unknown as {
-      color: Color;
-      emissive: Color;
-      emissiveIntensity: number;
-      shininess: number;
+    return {
+      positions: new Float32Array(positions),
+      sizes: new Float32Array(sizes),
+      colors: new Float32Array(colors),
     };
-    globeMaterial.color = new Color(globeConfig.globeColor);
-    globeMaterial.emissive = new Color(globeConfig.emissive);
-    globeMaterial.emissiveIntensity = globeConfig.emissiveIntensity || 0.1;
-    globeMaterial.shininess = globeConfig.shininess || 0.9;
-  };
-
-  const _buildData = () => {
-    const arcs = data;
-    let points = [];
-    for (let i = 0; i < arcs.length; i++) {
-      const arc = arcs[i];
-      const rgb = hexToRgb(arc.color) as { r: number; g: number; b: number };
-      points.push({
-        size: defaultProps.pointSize,
-        order: arc.order,
-        color: (t: number) => `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${1 - t})`,
-        lat: arc.startLat,
-        lng: arc.startLng,
-      });
-      points.push({
-        size: defaultProps.pointSize,
-        order: arc.order,
-        color: (t: number) => `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${1 - t})`,
-        lat: arc.endLat,
-        lng: arc.endLng,
-      });
-    }
-
-    // remove duplicates for same lat and lng
-    const filteredPoints = points.filter(
-      (v, i, a) =>
-        a.findIndex((v2) =>
-          ["lat", "lng"].every(
-            (k) => v2[k as "lat" | "lng"] === v[k as "lat" | "lng"],
-          ),
-        ) === i,
-    );
-
-    setGlobeData(filteredPoints);
-  };
-
-  useEffect(() => {
-    if (globeRef.current && globeData) {
-      globeRef.current
-        .hexPolygonsData(countries.features)
-        .hexPolygonResolution(3)
-        .hexPolygonMargin(0.7)
-        .showAtmosphere(defaultProps.showAtmosphere)
-        .atmosphereColor(defaultProps.atmosphereColor)
-        .atmosphereAltitude(defaultProps.atmosphereAltitude)
-        .hexPolygonColor((e) => {
-          return defaultProps.polygonColor;
-        });
-      startAnimation();
-    }
-  }, [globeData]);
-
-  const startAnimation = () => {
-    if (!globeRef.current || !globeData) return;
-
-    globeRef.current
-      .arcsData(data)
-      .arcStartLat((d) => (d as { startLat: number }).startLat * 1)
-      .arcStartLng((d) => (d as { startLng: number }).startLng * 1)
-      .arcEndLat((d) => (d as { endLat: number }).endLat * 1)
-      .arcEndLng((d) => (d as { endLng: number }).endLng * 1)
-      .arcColor((e: any) => (e as { color: string }).color)
-      .arcAltitude((e) => {
-        return (e as { arcAlt: number }).arcAlt * 1;
-      })
-      .arcStroke((e) => {
-        return [0.32, 0.28, 0.3][Math.round(Math.random() * 2)];
-      })
-      .arcDashLength(defaultProps.arcLength)
-      .arcDashInitialGap((e) => (e as { order: number }).order * 1)
-      .arcDashGap(15)
-      .arcDashAnimateTime((e) => defaultProps.arcTime);
-
-    globeRef.current
-      .pointsData(data)
-      .pointColor((e) => (e as { color: string }).color)
-      .pointsMerge(true)
-      .pointAltitude(0.0)
-      .pointRadius(2);
-
-    globeRef.current
-      .ringsData([])
-      .ringColor((e: any) => (t: any) => e.color(t))
-      .ringMaxRadius(defaultProps.maxRings)
-      .ringPropagationSpeed(RING_PROPAGATION_SPEED)
-      .ringRepeatPeriod(
-        (defaultProps.arcTime * defaultProps.arcLength) / defaultProps.rings,
-      );
-  };
-
-  useEffect(() => {
-    if (!globeRef.current || !globeData) return;
-
-    const interval = setInterval(() => {
-      if (!globeRef.current || !globeData) return;
-      numbersOfRings = genRandomNumbers(
-        0,
-        data.length,
-        Math.floor((data.length * 4) / 5),
-      );
-
-      globeRef.current.ringsData(
-        globeData.filter((d, i) => numbersOfRings.includes(i)),
-      );
-    }, 2000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [globeRef.current, globeData]);
-
-  return (
-    <>
-      <threeGlobe ref={globeRef} />
-    </>
-  );
-}
-
-export function WebGLRendererConfig() {
-  const { gl, size } = useThree();
-
-  useEffect(() => {
-    gl.setPixelRatio(window.devicePixelRatio);
-    gl.setSize(size.width, size.height);
-    gl.setClearColor(0xffaaff, 0);
   }, []);
 
-  return null;
-}
+  useEffect(() => {
+    if (!containerRef.current) return;
 
-export function World(props: WorldProps) {
-  const { globeConfig } = props;
-  const scene = new Scene();
-  scene.fog = new Fog(0xffffff, 400, 2000);
-  return (
-    <Canvas scene={scene} camera={new PerspectiveCamera(50, aspect, 180, 1800)}>
-      <WebGLRendererConfig />
-      <ambientLight color={globeConfig.ambientLight} intensity={0.6} />
-      <directionalLight
-        color={globeConfig.directionalLeftLight}
-        position={new Vector3(-400, 100, 400)}
-      />
-      <directionalLight
-        color={globeConfig.directionalTopLight}
-        position={new Vector3(-200, 500, 200)}
-      />
-      <pointLight
-        color={globeConfig.pointLight}
-        position={new Vector3(-200, 500, 200)}
-        intensity={0.8}
-      />
-      <Globe {...props} />
-      <OrbitControls
-        enablePan={false}
-        enableZoom={false}
-        minDistance={cameraZ}
-        maxDistance={cameraZ}
-        autoRotateSpeed={1}
-        autoRotate={true}
-        minPolarAngle={Math.PI / 3.5}
-        maxPolarAngle={Math.PI - Math.PI / 3}
-      />
-    </Canvas>
-  );
-}
+    // Scene setup with enhanced background
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x000833, 0.0003);
 
-export function hexToRgb(hex: string) {
-  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-  hex = hex.replace(shorthandRegex, function (m, r, g, b) {
-    return r + r + g + g + b + b;
-  });
+    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 2000);
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true,
+      powerPreference: "high-performance",
+    });
 
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result
-    ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+    containerRef.current.appendChild(renderer.domElement);
+
+    camera.position.z = 200;
+
+    // Enhanced controls with smooth damping
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.rotateSpeed = 0.5;
+    controls.enableZoom = true;
+    controls.minDistance = 150;
+    controls.maxDistance = 400;
+    controls.autoRotate = isAutoRotate;
+    controls.autoRotateSpeed = 0.5;
+
+    // Texture loader with loading manager
+    const loadingManager = new THREE.LoadingManager();
+    const textureLoader = new THREE.TextureLoader(loadingManager);
+
+    // Enhanced globe materials with normal mapping
+    const globeGeometry = new THREE.SphereGeometry(100, 128, 128);
+    const globeMaterial = new THREE.MeshPhysicalMaterial({
+      map: textureLoader.load("/earth-map.jpg"),
+      bumpMap: textureLoader.load("/earth-bump.jpg"),
+      normalMap: textureLoader.load("/earth-normal.jpg"),
+      roughnessMap: textureLoader.load("/earth-roughness.jpg"),
+      bumpScale: 2,
+      emissiveMap: textureLoader.load("/earth-night.jpg"),
+      emissive: new THREE.Color(0x112244),
+      emissiveIntensity: 1.5,
+      metalness: 0.1,
+      roughness: 0.8,
+      clearcoat: 0.3,
+      clearcoatRoughness: 0.4,
+      transparent: true,
+      opacity: 0.99,
+    });
+
+    const globe = new THREE.Mesh(globeGeometry, globeMaterial);
+    scene.add(globe);
+
+    // Enhanced clouds with dynamic movement
+    const cloudGeometry = new THREE.SphereGeometry(102, 64, 64);
+    const cloudMaterial = new THREE.MeshPhongMaterial({
+      map: textureLoader.load("/earth-clouds.png"),
+      transparent: true,
+      opacity: 0.4,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+    const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
+    scene.add(clouds);
+
+    // Enhanced atmosphere with dynamic aurora effects
+    const atmosphereGeometry = new THREE.SphereGeometry(103, 64, 64);
+    const atmosphereMaterial = new THREE.ShaderMaterial({
+      transparent: true,
+      side: THREE.BackSide,
+      uniforms: {
+        time: { value: 0 },
+        viewVector: { value: camera.position },
+        sunPosition: { value: new THREE.Vector3(500, 0, 200) },
+      },
+      vertexShader: `
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+        varying float intensity;
+        uniform vec3 viewVector;
+        uniform vec3 sunPosition;
+
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          vPosition = position;
+          vec3 viewDirection = normalize(viewVector - position);
+          vec3 sunDirection = normalize(sunPosition - position);
+          intensity = pow(1.0 - abs(dot(vNormal, viewDirection)), 3.0) *
+                     (0.5 + 0.5 * max(dot(vNormal, sunDirection), 0.0));
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+        varying float intensity;
+        uniform float time;
+
+        void main() {
+          vec3 baseGlow = vec3(0.1, 0.4, 1.0);
+          vec3 auroraColor = vec3(0.1, 1.0, 0.5);
+          float aurora = pow(sin(vPosition.y * 0.1 + time + sin(vPosition.x * 0.05) * 2.0), 2.0);
+          vec3 finalColor = mix(baseGlow, auroraColor, aurora * 0.5);
+          finalColor *= intensity;
+          gl_FragColor = vec4(finalColor, intensity * 0.8);
+        }
+      `,
+    });
+    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+    scene.add(atmosphere);
+
+    // Enhanced star field
+    const starsGeometry = new THREE.BufferGeometry();
+    starsGeometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(starPositions.positions, 3),
+    );
+    starsGeometry.setAttribute(
+      "size",
+      new THREE.BufferAttribute(starPositions.sizes, 1),
+    );
+    starsGeometry.setAttribute(
+      "color",
+      new THREE.BufferAttribute(starPositions.colors, 3),
+    );
+
+    const starsMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        time: { value: 0 },
+        pixelRatio: { value: renderer.getPixelRatio() },
+      },
+      vertexShader: `
+        attribute float size;
+        attribute vec3 color;
+        varying vec3 vColor;
+        uniform float time;
+
+        void main() {
+          vColor = color;
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          gl_PointSize = size * (300.0 / -mvPosition.z) * uniform.pixelRatio;
+          gl_Position = projectionMatrix * mvPosition;
+        }
+      `,
+      fragmentShader: `
+        varying vec3 vColor;
+
+        void main() {
+          vec2 xy = gl_PointCoord.xy - vec2(0.5);
+          float ll = length(xy);
+          if (ll > 0.5) discard;
+          gl_FragColor = vec4(vColor, 1.0 - (ll * 2.0));
+        }
+      `,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+    });
+
+    const stars = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(stars);
+
+    // Enhanced city markers with interactive features
+    const cities = [
+      { name: "New York", lat: 40.7128, lng: -74.006, population: "8.4M" },
+      { name: "London", lat: 51.5074, lng: -0.1278, population: "9.0M" },
+      { name: "Tokyo", lat: 35.6762, lng: 139.6503, population: "37.4M" },
+      { name: "Sydney", lat: -33.8688, lng: 151.2093, population: "5.3M" },
+      { name: "Dubai", lat: 25.2048, lng: 55.2708, population: "3.4M" },
+      { name: "Singapore", lat: 1.3521, lng: 103.8198, population: "5.7M" },
+      { name: "Mumbai", lat: 19.076, lng: 72.8777, population: "20.4M" },
+      { name: "São Paulo", lat: -23.5505, lng: -46.6333, population: "22.0M" },
+    ];
+
+    // Create city markers with enhanced visuals
+    const markerGeometry = new THREE.SphereGeometry(0.8, 16, 16);
+    const markers = [];
+
+    cities.forEach((city) => {
+      const phi = (90 - city.lat) * (Math.PI / 180);
+      const theta = (city.lng + 180) * (Math.PI / 180);
+      const radius = 101;
+
+      // Create marker with glow effect
+      const markerMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+          time: { value: 0 },
+          color: { value: new THREE.Color(0x00ffff) },
+        },
+        vertexShader: `
+          varying vec3 vNormal;
+          void main() {
+            vNormal = normalize(normalMatrix * normal);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 color;
+          uniform float time;
+          varying vec3 vNormal;
+          void main() {
+            float intensity = pow(0.7 - dot(vNormal, vec3(0, 0, 1.0)), 2.0);
+            gl_FragColor = vec4(color, 1.0) * intensity;
+          }
+        `,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+      });
+
+      const marker = new THREE.Mesh(markerGeometry, markerMaterial);
+      marker.position.x = radius * Math.sin(phi) * Math.cos(theta);
+      marker.position.y = radius * Math.cos(phi);
+      marker.position.z = radius * Math.sin(phi) * Math.sin(theta);
+
+      // Add connection lines between cities
+      if (markers.length > 0) {
+        const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+          marker.position,
+          markers[markers.length - 1].mesh.position,
+        ]);
+        const lineMaterial = new THREE.LineBasicMaterial({
+          color: 0x00ffff,
+          transparent: true,
+          opacity: 0.3,
+        });
+        const line = new THREE.Line(lineGeometry, lineMaterial);
+        scene.add(line);
       }
-    : null;
-}
 
-export function genRandomNumbers(min: number, max: number, count: number) {
-  const arr = [];
-  while (arr.length < count) {
-    const r = Math.floor(Math.random() * (max - min)) + min;
-    if (arr.indexOf(r) === -1) arr.push(r);
-  }
+      scene.add(marker);
+      markers.push({
+        mesh: marker,
+        city: city,
+        phase: Math.random() * Math.PI * 2,
+      });
+    });
 
-  return arr;
-}
+    // Enhanced lighting system
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+
+    const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    sunLight.position.set(500, 0, 200);
+    scene.add(sunLight);
+
+    // Dynamic colored lights
+    const lights = [
+      { color: 0x00ffff, intensity: 2, distance: 500, decay: 1.5 },
+      { color: 0xff00ff, intensity: 2, distance: 500, decay: 1.5 },
+      { color: 0xffff00, intensity: 2, distance: 500, decay: 1.5 },
+    ].map(({ color, intensity, distance, decay }) => {
+      const light = new THREE.PointLight(color, intensity, distance, decay);
+      scene.add(light);
+      return light;
+    });
+
+    // Animation loop with enhanced effects
+    let time = 0;
+    const animate = () => {
+      time += 0.01;
+
+      // Update shaders and materials
+      atmosphereMaterial.uniforms.time.value = time;
+      atmosphereMaterial.uniforms.viewVector.value = camera.position;
+      starsMaterial.uniforms.time.value = time;
+
+      // Rotate clouds with varying speed
+      clouds.rotation.y += 0.0005 * (1 + 0.5 * Math.sin(time * 0.2));
+
+      // Animate markers and update city labels
+      markers.forEach((marker, index) => {
+        const pulseScale = 1 + Math.sin(time * 2 + marker.phase) * 0.2;
+        marker.mesh.scale.setScalar(pulseScale);
+        marker.mesh.material.uniforms.time.value = time;
+
+        // Pulse intensity based on selection
+        if (selectedCity === marker.city.name) {
+          marker.mesh.scale.setScalar(pulseScale * 1.5);
+        }
+      });
+
+      // Animate lights
+      lights.forEach((light, i) => {
+        const angle = time * 0.5 + (i * Math.PI * 2) / lights.length;
+        light.position.x = Math.sin(angle) * 300;
+        light.position.z = Math.cos(angle) * 300;
+        light.intensity = 2 + Math.sin(time * 2) * 0.5;
+      });
+
+      controls.update();
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    };
+
+    animate();
+    setIsLoading(false);
+
+    // Handle window resize
+    const handleResize = () => {
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+      starsMaterial.uniforms.pixelRatio.value = renderer.getPixelRatio();
+    };
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      scene.traverse((object) => {
+        if (object.geometry) object.geometry.dispose();
+        if (object.material) {
+          if (object.material.map) object.material.map.dispose();
+          if (object.material.bumpMap) object.material.bumpMap.dispose();
+          if (object.material.normalMap) object.material.normalMap.dispose();
+          if (object.material.roughnessMap)
+            object.material.roughnessMap.dispose();
+          if (object.material.emissiveMap)
+            object.material.emissiveMap.dispose();
+          object.material.dispose();
+        }
+      });
+      renderer.dispose();
+      if (containerRef.current) {
+        containerRef.current.removeChild(renderer.domElement);
+      }
+    };
+  }, [width, height, starPositions, isAutoRotate, selectedCity]);
+
+  return (
+    <div className="relative">
+      <div
+        ref={containerRef}
+        className="relative"
+        style={{
+          width: `${width}px`,
+          height: `${height}px`,
+          opacity: isLoading ? 0 : 1,
+          transition: "opacity 0.5s ease-in-out",
+        }}
+      />
+
+      {/* Controls Panel */}
+      <div className="absolute bottom-4 right-4 flex flex-col gap-2">
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors backdrop-blur-md bg-opacity-80"
+          onClick={() => setIsAutoRotate(!isAutoRotate)}
+        >
+          {isAutoRotate ? "Stop Rotation" : "Start Rotation"}
+        </button>
+      </div>
+
+      {/* Loading Spinner */}
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-4">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500" />
+            <div className="text-white text-xl font-semibold">
+              Loading Globe...
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* City Information Panel */}
+      {selectedCity && (
+        <div className="absolute top-4 left-4 p-4 bg-black bg-opacity-50 backdrop-blur-md rounded-lg text-white">
+          <h3 className="text-xl font-bold mb-2">{selectedCity}</h3>
+          <button
+            className="absolute top-2 right-2 text-white hover:text-gray-300"
+            onClick={() => setSelectedCity(null)}
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {/* Control Instructions */}
+
+      {/* Stats Panel */}
+    </div>
+  );
+};
+
+export default Globe;
