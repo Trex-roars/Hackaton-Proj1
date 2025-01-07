@@ -102,7 +102,7 @@ export default function DashboardWithGlobe() {
     <Layout>
       {showGlobe && (
         <div className="absolute inset-0 flex items-center justify-center z-0">
-          <div className="relative w-[800px] h-[800px]">
+          <div className="relative  w-[800px] h-[800px]">
             <Globe width={800} height={800} />
           </div>
         </div>
