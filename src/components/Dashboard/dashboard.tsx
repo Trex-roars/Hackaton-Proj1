@@ -11,6 +11,8 @@ import {
 } from "react-icons/fa";
 import dynamic from "next/dynamic";
 import { sampleArcs, globeConfig } from "./sample-arcs";
+import { GetResponse } from "@/actions/gemini";
+import marked from "marked";
 
 const World = dynamic(() => import("../ui/globe").then((m) => m.World), {
   ssr: false,
@@ -43,7 +45,7 @@ export default function DashboardWithGlobe() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!inputValue.trim()) return;
 
     setIsAnimating(true);
@@ -62,16 +64,40 @@ export default function DashboardWithGlobe() {
       },
     ]);
 
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          type: "agent",
-          content: `Analysis for "${inputValue}": Here's what I found about your social media query. This is a simulated response that would come from your API with relevant insights and recommendations.`,
-          animate: true,
-          typing: true,
-        },
-      ]);
+    setTimeout(async () => {
+      try {
+        // Send input to GetResponse(input) and wait for the response
+        const response = await GetResponse(inputValue);
+
+        // Parse the Markdown response to HTML
+        const formattedResponse = marked(response);
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            type: "agent",
+            content: (
+              <div
+                className="markdown-response"
+                dangerouslySetInnerHTML={{ __html: formattedResponse }}
+              />
+            ),
+            animate: true,
+            typing: true,
+          },
+        ]);
+      } catch (error) {
+        console.error("Error getting response:", error);
+        setMessages((prev) => [
+          ...prev,
+          {
+            type: "agent",
+            content: "Sorry, something went wrong. Please try again later.",
+            animate: true,
+            typing: true,
+          },
+        ]);
+      }
     }, 1000);
 
     setInputValue("");
@@ -80,7 +106,6 @@ export default function DashboardWithGlobe() {
       setIsAnimating(false);
     }, 800);
   };
-
   const handleReset = () => {
     setIsAnimating(true);
     setGlobeScale(1);
@@ -94,7 +119,7 @@ export default function DashboardWithGlobe() {
   };
 
   return (
-    <div className="relative mt-20 max-h-screen text-white overflow-hidden">
+    <div className="relative mt-16 max-h-screen text-white overflow-hidden">
       {/* Modified Globe Container */}
       <div
         ref={globeContainerRef}
@@ -244,7 +269,7 @@ export default function DashboardWithGlobe() {
           }`}
         >
           {/* Enhanced Quick Actions */}
-          <div className="max-w-4xl mx-auto px-6">
+          <div className="max-w-4xl mx-auto px-6 mt-10">
             <div className="flex flex-wrap justify-center gap-4 mb-12">
               {[
                 "Track follower growth",
