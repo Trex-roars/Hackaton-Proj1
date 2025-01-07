@@ -1,6 +1,5 @@
 "use client";
 
-// DashboardWithGlobe.jsx
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { marked } from "marked";
@@ -10,9 +9,9 @@ import Header from "./Header";
 import ChatContainer from "./ChatContainer";
 import QuickActions from "./QuickActions";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-// import Globe from "../ui/globe";
-// import runLangflow from "@/actions/api";
 import { GetResponse } from "@/actions/gemini";
+import { Button } from "../ui/button";
+import CampaignForm from "./CampaignForm";
 
 const Globe = dynamic(() => import("../ui/globe"), {
   ssr: false,
@@ -33,6 +32,69 @@ export default function DashboardWithGlobe() {
     "Compare competitor metrics",
     "Generate campaign reports",
   ];
+
+  const handleCampaignSubmit = async (formData) => {
+    setIsLoading(true);
+    setIsExpanded(true);
+
+    // Format the form data into a structured prompt
+    const prompt = `Create a campaign analysis for:
+Platform: ${formData.platform}
+Campaign Details:
+${Object.entries(formData)
+  .filter(([key]) => key !== "platform")
+  .map(([key, value]) => `${key}: ${value}`)
+  .join("\n")}`;
+
+    // Use handleSubmit logic with the formatted prompt
+    const newMessage = {
+      type: "user",
+      content: prompt,
+      animate: true,
+      timestamp: new Date().toLocaleTimeString(),
+    };
+
+    setMessages((prev) => [...prev, newMessage]);
+    setShowGlobe(false);
+
+    try {
+      const response = await GetResponse(prompt);
+      const formattedResponse = marked(response);
+      const sanitizedResponse = DOMPurify.sanitize(formattedResponse);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "agent",
+          content: (
+            <div className="markdown-response prose prose-invert max-w-none">
+              <div dangerouslySetInnerHTML={{ __html: sanitizedResponse }} />
+            </div>
+          ),
+          animate: true,
+          timestamp: new Date().toLocaleTimeString(),
+        },
+      ]);
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "error",
+          content: (
+            <Alert variant="destructive">
+              <AlertDescription>
+                Sorry, something went wrong. Please try again later.
+              </AlertDescription>
+            </Alert>
+          ),
+          animate: true,
+          timestamp: new Date().toLocaleTimeString(),
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSubmit = async () => {
     if (!inputValue.trim() || isLoading) return;
@@ -101,7 +163,7 @@ export default function DashboardWithGlobe() {
     <Layout>
       {showGlobe && (
         <div className="absolute inset-0 flex items-center justify-center z-0">
-          <div className="relative  w-[800px] h-[800px]">
+          <div className="relative w-[800px] h-[800px]">
             <Globe width={800} height={800} />
           </div>
         </div>
@@ -120,13 +182,16 @@ export default function DashboardWithGlobe() {
       />
 
       {!isExpanded && (
-        <QuickActions
-          suggestions={defaultSuggestions}
-          onSuggestionClick={(text) => {
-            setInputValue(text);
-            handleSubmit();
-          }}
-        />
+        <>
+          <CampaignForm onSubmit={handleCampaignSubmit} />
+          <QuickActions
+            suggestions={defaultSuggestions}
+            onSuggestionClick={(text) => {
+              setInputValue(text);
+              handleSubmit();
+            }}
+          />
+        </>
       )}
     </Layout>
   );
