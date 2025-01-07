@@ -12,7 +12,8 @@ import {
 import dynamic from "next/dynamic";
 import { sampleArcs, globeConfig } from "./sample-arcs";
 import { GetResponse } from "@/actions/gemini";
-import marked from "marked";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 
 const World = dynamic(() => import("../ui/globe").then((m) => m.World), {
   ssr: false,
@@ -69,8 +70,9 @@ export default function DashboardWithGlobe() {
         // Send input to GetResponse(input) and wait for the response
         const response = await GetResponse(inputValue);
 
-        // Parse the Markdown response to HTML
+        // Parse the Markdown response to HTML and sanitize it
         const formattedResponse = marked(response);
+        const sanitizedResponse = DOMPurify.sanitize(formattedResponse);
 
         setMessages((prev) => [
           ...prev,
@@ -79,7 +81,7 @@ export default function DashboardWithGlobe() {
             content: (
               <div
                 className="markdown-response"
-                dangerouslySetInnerHTML={{ __html: formattedResponse }}
+                dangerouslySetInnerHTML={{ __html: sanitizedResponse }}
               />
             ),
             animate: true,
@@ -106,6 +108,7 @@ export default function DashboardWithGlobe() {
       setIsAnimating(false);
     }, 800);
   };
+
   const handleReset = () => {
     setIsAnimating(true);
     setGlobeScale(1);
