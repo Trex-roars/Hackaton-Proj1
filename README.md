@@ -1,6 +1,9 @@
 ### Prompt 1:
 
-    `Profile Data:
+    
+    Name: Aditya
+    Profile: Adp_alpha`
+    Profile Data:
     Bio: 7
     Followers: 329
     Following: 178
@@ -47,4 +50,5 @@
     Type: image
     Likes: NaN
     Hashtags: #gym, #cute, #love, #instagood, #instagram, #fitnessmodel, #model
-    Posted: 9/27/2023`
+    Posted: 9/27/2023
+    `
