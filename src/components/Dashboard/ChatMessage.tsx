@@ -2,7 +2,7 @@
 import React from "react";
 import { User, MessageCircle } from "lucide-react";
 
-const ChatMessage = ({ message }) => (
+const ChatMessage = ({ message }: { message: any }) => (
   <div
     className={`flex ${
       message.type === "user" ? "justify-end" : "justify-start"

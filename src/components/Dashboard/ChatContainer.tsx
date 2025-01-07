@@ -14,9 +14,17 @@ const ChatContainer = ({
   handleReset,
   isLoading,
   isExpanded,
+}: {
+  messages: Array<{ role: string; content: string }>;
+  inputValue: string;
+  setInputValue: (value: string) => void;
+  handleSubmit: (e: React.FormEvent<Element>) => void;
+  handleReset: () => void;
+  isLoading: boolean;
+  isExpanded: boolean;
 }) => {
-  const messagesEndRef = useRef(null);
-  const messagesContainerRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollIndicator, setShowScrollIndicator] = useState(false);
 
   useEffect(() => {
@@ -56,7 +64,7 @@ const ChatContainer = ({
             ref={messagesContainerRef}
             className="flex-1 overflow-y-auto mb-4 space-y-4 scrollbar-thin scrollbar-thumb-blue-600/50 scrollbar-track-transparent p-4"
           >
-            {messages.map((message, index) => (
+            {messages.map((message, index: number) => (
               <ChatMessage key={index} message={message} />
             ))}
             <div ref={messagesEndRef} />
