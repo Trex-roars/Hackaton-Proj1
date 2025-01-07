@@ -12,6 +12,7 @@ import {
 import dynamic from "next/dynamic";
 import { sampleArcs, globeConfig } from "./sample-arcs";
 import { GetResponse } from "@/actions/gemini";
+import runLangflow from "@/actions/api";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 
@@ -68,7 +69,9 @@ export default function DashboardWithGlobe() {
     setTimeout(async () => {
       try {
         // Send input to GetResponse(input) and wait for the response
-        const response = await GetResponse(inputValue);
+        const response = await runLangflow(inputValue);
+        // console.log(response);
+        // const response = await GetResponse(inputValue);
 
         // Parse the Markdown response to HTML and sanitize it
         const formattedResponse = marked(response);
