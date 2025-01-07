@@ -17,10 +17,24 @@ const Globe = dynamic(() => import("../ui/globe"), {
   ssr: false,
 });
 
+// Define types for messages - keep only one definition
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+interface UIMessage {
+  type: "user" | "agent" | "error";
+  content: string | JSX.Element;
+  animate?: boolean;
+  timestamp: string;
+}
+
 export default function DashboardWithGlobe() {
   const [inputValue, setInputValue] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<UIMessage[]>([]);
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [showGlobe, setShowGlobe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,11 +47,78 @@ export default function DashboardWithGlobe() {
     "Generate campaign reports",
   ];
 
-  const handleCampaignSubmit = async (formData) => {
+  const handleSubmit = async () => {
+    if (!inputValue.trim() || isLoading) return;
+
     setIsLoading(true);
     setIsExpanded(true);
 
-    // Format the form data into a structured prompt
+    const userMessage: ChatMessage = {
+      role: "user",
+      content: inputValue,
+    };
+
+    const userUIMessage: UIMessage = {
+      type: "user",
+      content: inputValue,
+      animate: true,
+      timestamp: new Date().toLocaleTimeString(),
+    };
+
+    setChatHistory((prev) => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userUIMessage]);
+    setInputValue("");
+
+    try {
+      const recentHistory = chatHistory.slice(-2);
+      const response = await GetResponse(inputValue, recentHistory);
+      const formattedResponse = marked(response);
+      const sanitizedResponse = DOMPurify.sanitize(formattedResponse);
+
+      const aiMessage: ChatMessage = {
+        role: "assistant",
+        content: response,
+      };
+
+      const aiUIMessage: UIMessage = {
+        type: "agent",
+        content: (
+          <div className="markdown-response prose prose-invert max-w-none">
+            <div dangerouslySetInnerHTML={{ __html: sanitizedResponse }} />
+          </div>
+        ),
+        animate: true,
+        timestamp: new Date().toLocaleTimeString(),
+      };
+
+      setChatHistory((prev) => [...prev, aiMessage]);
+      setMessages((prev) => [...prev, aiUIMessage]);
+    } catch (error) {
+      console.error("Error in handleSubmit:", error);
+      const errorMessage: UIMessage = {
+        type: "error",
+        content: (
+          <Alert variant="destructive">
+            <AlertDescription>
+              Sorry, something went wrong. Please try again later.
+            </AlertDescription>
+          </Alert>
+        ),
+        animate: true,
+        timestamp: new Date().toLocaleTimeString(),
+      };
+
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+      setShowGlobe(false);
+    }
+  };
+
+  const handleCampaignSubmit = async (formData: Record<string, string>) => {
+    setIsLoading(true);
+    setIsExpanded(true);
+
     const prompt = `Create a campaign analysis for:
 Platform: ${formData.platform}
 Campaign Details:
@@ -46,109 +127,64 @@ ${Object.entries(formData)
   .map(([key, value]) => `${key}: ${value}`)
   .join("\n")}`;
 
-    // Use handleSubmit logic with the formatted prompt
-    const newMessage = {
+    const userMessage: ChatMessage = {
+      role: "user",
+      content: prompt,
+    };
+
+    const userUIMessage: UIMessage = {
       type: "user",
       content: prompt,
       animate: true,
       timestamp: new Date().toLocaleTimeString(),
     };
 
-    setMessages((prev) => [...prev, newMessage]);
+    setChatHistory((prev) => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userUIMessage]);
     setShowGlobe(false);
 
     try {
-      const response = await GetResponse(prompt);
+      const recentHistory = chatHistory.slice(-2);
+      const response = await GetResponse(prompt, recentHistory);
       const formattedResponse = marked(response);
       const sanitizedResponse = DOMPurify.sanitize(formattedResponse);
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          type: "agent",
-          content: (
-            <div className="markdown-response prose prose-invert max-w-none">
-              <div dangerouslySetInnerHTML={{ __html: sanitizedResponse }} />
-            </div>
-          ),
-          animate: true,
-          timestamp: new Date().toLocaleTimeString(),
-        },
-      ]);
+      const aiMessage: ChatMessage = {
+        role: "assistant",
+        content: response,
+      };
+
+      const aiUIMessage: UIMessage = {
+        type: "agent",
+        content: (
+          <div className="markdown-response prose prose-invert max-w-none">
+            <div dangerouslySetInnerHTML={{ __html: sanitizedResponse }} />
+          </div>
+        ),
+        animate: true,
+        timestamp: new Date().toLocaleTimeString(),
+      };
+
+      setChatHistory((prev) => [...prev, aiMessage]);
+      setMessages((prev) => [...prev, aiUIMessage]);
     } catch (error) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          type: "error",
-          content: (
-            <Alert variant="destructive">
-              <AlertDescription>
-                Sorry, something went wrong. Please try again later.
-              </AlertDescription>
-            </Alert>
-          ),
-          animate: true,
-          timestamp: new Date().toLocaleTimeString(),
-        },
-      ]);
+      console.error("Error in handleCampaignSubmit:", error);
+      const errorMessage: UIMessage = {
+        type: "error",
+        content: (
+          <Alert variant="destructive">
+            <AlertDescription>
+              Sorry, something went wrong. Please try again later.
+            </AlertDescription>
+          </Alert>
+        ),
+        animate: true,
+        timestamp: new Date().toLocaleTimeString(),
+      };
+
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!inputValue.trim() || isLoading) return;
-
-    setIsLoading(true);
-    setIsExpanded(true);
-
-    const newMessage = {
-      type: "user",
-      content: inputValue,
-      animate: true,
-      timestamp: new Date().toLocaleTimeString(),
-    };
-
-    setMessages((prev) => [...prev, newMessage]);
-    setInputValue("");
-
-    try {
-      const response = await GetResponse(inputValue);
-      const formattedResponse = marked(response);
-      const sanitizedResponse = DOMPurify.sanitize(formattedResponse);
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          type: "agent",
-          content: (
-            <div className="markdown-response prose prose-invert max-w-none">
-              <div dangerouslySetInnerHTML={{ __html: sanitizedResponse }} />
-            </div>
-          ),
-          animate: true,
-          timestamp: new Date().toLocaleTimeString(),
-        },
-      ]);
-    } catch (error) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          type: "error",
-          content: (
-            <Alert variant="destructive">
-              <AlertDescription>
-                Sorry, something went wrong. Please try again later.
-              </AlertDescription>
-            </Alert>
-          ),
-          animate: true,
-          timestamp: new Date().toLocaleTimeString(),
-        },
-      ]);
-    } finally {
-      setIsLoading(false);
-      setShowGlobe(false);
     }
   };
 
@@ -156,6 +192,7 @@ ${Object.entries(formData)
     setIsExpanded(false);
     setInputValue("");
     setMessages([]);
+    setChatHistory([]);
     setShowGlobe(true);
   };
 
