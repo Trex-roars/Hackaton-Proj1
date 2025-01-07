@@ -1,4 +1,4 @@
-import DashboardWithGlobe from "@/components/Dashboard/dashboard";
+import DashboardWithGlobe from "@/components/Dashboard/DashboardWithGlobe";
 import React from "react";
 
 function page() {
