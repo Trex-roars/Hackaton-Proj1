@@ -10,12 +10,11 @@ import Header from "./Header";
 import ChatContainer from "./ChatContainer";
 import QuickActions from "./QuickActions";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { globeConfig, sampleArcs } from "./sample-arcs";
-import Globe from "../ui/globe";
-import runLangflow from "@/actions/api";
+// import Globe from "../ui/globe";
+// import runLangflow from "@/actions/api";
 import { GetResponse } from "@/actions/gemini";
 
-const World = dynamic(() => import("../ui/globe").then((m) => m.World), {
+const Globe = dynamic(() => import("../ui/globe"), {
   ssr: false,
 });
 

@@ -69,7 +69,7 @@ const Globe = ({ width = 800, height = 800 }) => {
     controls.minDistance = 150;
     controls.maxDistance = 400;
     controls.autoRotate = isAutoRotate;
-    controls.autoRotateSpeed = 0.5;
+    controls.autoRotateSpeed = 2;
 
     // Texture loader with loading manager
     const loadingManager = new THREE.LoadingManager();
@@ -85,9 +85,9 @@ const Globe = ({ width = 800, height = 800 }) => {
       bumpScale: 2,
       emissiveMap: textureLoader.load("/earth-night.jpg"),
       emissive: new THREE.Color(0x112244),
-      emissiveIntensity: 1.5,
+      emissiveIntensity: 0.1,
       metalness: 0.1,
-      roughness: 0.8,
+      roughness: 2,
       clearcoat: 0.3,
       clearcoatRoughness: 0.4,
       transparent: true,
@@ -102,8 +102,8 @@ const Globe = ({ width = 800, height = 800 }) => {
     const cloudMaterial = new THREE.MeshPhongMaterial({
       map: textureLoader.load("/earth-clouds.png"),
       transparent: true,
-      opacity: 0.4,
-      depthWrite: false,
+      opacity: 0.15,
+      depthWrite: true,
       blending: THREE.AdditiveBlending,
     });
     const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
@@ -281,18 +281,18 @@ const Globe = ({ width = 800, height = 800 }) => {
     });
 
     // Enhanced lighting system
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.1); // Change from 0.5 to 0.2
     scene.add(ambientLight);
 
-    const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    const sunLight = new THREE.DirectionalLight(0xffffff, 0.5); // Change from 1.5 to 0.8
     sunLight.position.set(500, 0, 200);
     scene.add(sunLight);
 
     // Dynamic colored lights
     const lights = [
-      { color: 0x00ffff, intensity: 2, distance: 500, decay: 1.5 },
-      { color: 0xff00ff, intensity: 2, distance: 500, decay: 1.5 },
-      { color: 0xffff00, intensity: 2, distance: 500, decay: 1.5 },
+      { color: 0x00ffff, intensity: 0.5, distance: 500, decay: 1.5 },
+      { color: 0xff00ff, intensity: 0.5, distance: 500, decay: 1.5 },
+      { color: 0xffff00, intensity: 0.5, distance: 500, decay: 1.5 },
     ].map(({ color, intensity, distance, decay }) => {
       const light = new THREE.PointLight(color, intensity, distance, decay);
       scene.add(light);

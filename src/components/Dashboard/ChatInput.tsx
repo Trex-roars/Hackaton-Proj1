@@ -10,6 +10,13 @@ const ChatInput = ({
   handleReset,
   isLoading,
   isExpanded,
+}: {
+  inputValue: string;
+  setInputValue: (value: string) => void;
+  handleSubmit: () => void;
+  handleReset: () => void;
+  isLoading: boolean;
+  isExpanded: boolean;
 }) => (
   <div className="bg-gray-800/90 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300">
     <div className="flex items-center space-x-3">
@@ -24,7 +31,7 @@ const ChatInput = ({
         }
         disabled={isLoading}
         className="flex-1 bg-transparent outline-none text-lg placeholder-gray-500 text-white focus:placeholder-blue-400 transition-all duration-300 disabled:opacity-50"
-        onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
+        onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
       />
       <div className="flex items-center space-x-3 text-gray-400">
         {isExpanded ? (
