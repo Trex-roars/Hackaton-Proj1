@@ -4,6 +4,7 @@ import HeroSection from "@/components/hero-section";
 import { Footer } from "@/components/globals/footer/footer";
 import { Teamates } from "@/components/teamates";
 import { Features } from "@/components/feature";
+
 const page = () => {
   return (
     <div className="flex flex-col justify-center items-center">
