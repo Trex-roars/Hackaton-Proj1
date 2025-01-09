@@ -57,7 +57,7 @@ const ChatInput = ({
           </>
         ) : (
           <button onClick={handleSubmit} className="group">
-            <Sparkles className="w-6 h-6 group-hover:text-yellow-500 transition-all duration-300 transform group-hover:scale-110 animate-pulse" />
+            <Sparkles className="w-6 h-6 group-hover:text-yellow-500 transition-all duration-300 transform group-hover:scale-110 " />
           </button>
         )}
       </div>

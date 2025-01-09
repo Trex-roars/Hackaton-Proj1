@@ -24,7 +24,7 @@ interface ChatMessage {
 }
 
 interface UIMessage {
-  type: "user" | "agent" | "error";
+  role: "user" | "agent" | "error";
   content: string | JSX.Element;
   animate?: boolean;
   timestamp: string;
@@ -44,7 +44,6 @@ export default function DashboardWithGlobe() {
     "Identify top-performing posts",
     "Optimize posting schedules",
     "Compare competitor metrics",
-    "Generate campaign reports",
   ];
 
   const handleSubmit = async () => {
@@ -120,12 +119,12 @@ export default function DashboardWithGlobe() {
     setIsExpanded(true);
 
     const prompt = `Create a campaign analysis for:
-Platform: ${formData.platform}
-Campaign Details:
-${Object.entries(formData)
-  .filter(([key]) => key !== "platform")
-  .map(([key, value]) => `${key}: ${value}`)
-  .join("\n")}`;
+                        Platform: ${formData.platform}
+                        Campaign Details:
+                        ${Object.entries(formData)
+                          .filter(([key]) => key !== "platform")
+                          .map(([key, value]) => `${key}: ${value}`)
+                          .join("\n")}`;
 
     const userMessage: ChatMessage = {
       role: "user",
@@ -199,13 +198,12 @@ ${Object.entries(formData)
   return (
     <Layout>
       {showGlobe && (
-        <div className="absolute inset-0 flex items-center justify-center z-0">
-          <div className="relative w-[800px] h-[800px]">
+        <div className="absolute sepia-[30%] inset-0 flex items-center justify-center z-0">
+          <div className="relative w-[800px] max-h-[800px]">
             <Globe width={800} height={800} />
           </div>
         </div>
       )}
-
       <Header isExpanded={isExpanded} />
 
       <ChatContainer
@@ -219,8 +217,7 @@ ${Object.entries(formData)
       />
 
       {!isExpanded && (
-        <>
-          <CampaignForm onSubmit={handleCampaignSubmit} />
+        <div className="mt-10">
           <QuickActions
             suggestions={defaultSuggestions}
             onSuggestionClick={(text) => {
@@ -228,7 +225,8 @@ ${Object.entries(formData)
               handleSubmit();
             }}
           />
-        </>
+          <CampaignForm onSubmit={handleCampaignSubmit} />
+        </div>
       )}
     </Layout>
   );

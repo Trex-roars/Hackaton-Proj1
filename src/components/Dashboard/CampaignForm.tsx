@@ -45,15 +45,17 @@ const CampaignForm = ({ onSubmit }) => {
   };
 
   return (
-    <div className="fixed bottom-24 right-8 z-50">
+    <div className="flex my-7 items-center justify-center z-50">
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button
             size="lg"
-            className="bg-black/50 backdrop-blur-sm text-white font-semibold px-8 py-6 rounded-2xl shadow-lg hover:translate-x-5 hover:bg-muted border-2 border-pink-50 hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+            className="bg-black/50  backdrop-blur-sm text-white font-semibold px-8 py-6 rounded-2xl shadow-lg hover:bg-muted border-2 border-pink-50 hover:shadow-xl transition-all duration-300 flex items-center gap-2"
           >
             <PlusCircle className="w-5 h-5" />
-            New Campaign
+            <p className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-400 to-purple-500">
+              New Campaign
+            </p>
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-md">
