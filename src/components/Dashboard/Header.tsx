@@ -10,8 +10,8 @@ const Header = ({ isExpanded }) => (
         : "opacity-100 translate-y-0"
     }`}
   >
-    <div className="flex justify-center mt-8">
-      <div className="flex items-center space-x-4 p-4 bg-black/30 border border-gray-700 rounded-full shadow-lg hover:shadow-blue-500/20 hover:bg-black/40 transition-all duration-300 group">
+    <div className="flex justify-center  mt-8">
+      <div className="flex items-center  space-x-4 p-4 bg-black/80 border border-gray-700 rounded-full shadow-lg hover:shadow-blue-500/20 hover:bg-black/40 transition-all duration-300 group">
         <MessageCircle className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform duration-300" />
         <span className="text-sm text-gray-300 group-hover:text-white transition-colors duration-300">
           Powered by{" "}

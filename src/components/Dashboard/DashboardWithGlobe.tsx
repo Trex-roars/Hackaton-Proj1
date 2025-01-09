@@ -24,7 +24,7 @@ interface ChatMessage {
 }
 
 interface UIMessage {
-  type: "user" | "agent" | "error";
+  role: "user" | "agent" | "error";
   content: string | JSX.Element;
   animate?: boolean;
   timestamp: string;
@@ -120,12 +120,12 @@ export default function DashboardWithGlobe() {
     setIsExpanded(true);
 
     const prompt = `Create a campaign analysis for:
-Platform: ${formData.platform}
-Campaign Details:
-${Object.entries(formData)
-  .filter(([key]) => key !== "platform")
-  .map(([key, value]) => `${key}: ${value}`)
-  .join("\n")}`;
+                        Platform: ${formData.platform}
+                        Campaign Details:
+                        ${Object.entries(formData)
+                          .filter(([key]) => key !== "platform")
+                          .map(([key, value]) => `${key}: ${value}`)
+                          .join("\n")}`;
 
     const userMessage: ChatMessage = {
       role: "user",
@@ -199,13 +199,12 @@ ${Object.entries(formData)
   return (
     <Layout>
       {showGlobe && (
-        <div className="absolute inset-0 flex items-center justify-center z-0">
-          <div className="relative w-[800px] h-[800px]">
+        <div className="absolute sepia-[40%] inset-0 flex items-center justify-center z-0">
+          <div className="relative w-[800px] max-h-[800px]">
             <Globe width={800} height={800} />
           </div>
         </div>
       )}
-
       <Header isExpanded={isExpanded} />
 
       <ChatContainer
@@ -219,7 +218,7 @@ ${Object.entries(formData)
       />
 
       {!isExpanded && (
-        <>
+        <div className="mt-5">
           <CampaignForm onSubmit={handleCampaignSubmit} />
           <QuickActions
             suggestions={defaultSuggestions}
@@ -228,7 +227,7 @@ ${Object.entries(formData)
               handleSubmit();
             }}
           />
-        </>
+        </div>
       )}
     </Layout>
   );
