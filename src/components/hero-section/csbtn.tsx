@@ -30,7 +30,7 @@ export const Btn2 = () => {
   const router = useRouter();
   return (
     <button
-      onClick={() => router.push("https://youtu.be/64n_zymZshw")}
+      onClick={() => router.p("https://youtu.be/64n_zymZshw")}
       className="relative inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium text-white/90 rounded-full hover:bg-white/10 transition-all duration-300 border border-white/20 hover:border-white/30 backdrop-blur-sm"
     >
       <span className="relative z-10">Watch Demo</span>
