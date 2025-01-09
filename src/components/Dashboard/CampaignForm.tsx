@@ -53,7 +53,7 @@ const CampaignForm = ({ onSubmit }) => {
             className="bg-black/50  backdrop-blur-sm text-white font-semibold px-8 py-6 rounded-2xl shadow-lg hover:bg-muted border-2 border-pink-50 hover:shadow-xl transition-all duration-300 flex items-center gap-2"
           >
             <PlusCircle className="w-5 h-5" />
-            <p className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-400 to-purple-500">
+            <p className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-400 to-purple-200">
               New Campaign
             </p>
           </Button>
