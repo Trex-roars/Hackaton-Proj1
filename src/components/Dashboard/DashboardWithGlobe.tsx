@@ -44,7 +44,6 @@ export default function DashboardWithGlobe() {
     "Identify top-performing posts",
     "Optimize posting schedules",
     "Compare competitor metrics",
-    "Generate campaign reports",
   ];
 
   const handleSubmit = async () => {
@@ -199,7 +198,7 @@ export default function DashboardWithGlobe() {
   return (
     <Layout>
       {showGlobe && (
-        <div className="absolute sepia-[40%] inset-0 flex items-center justify-center z-0">
+        <div className="absolute sepia-[30%] inset-0 flex items-center justify-center z-0">
           <div className="relative w-[800px] max-h-[800px]">
             <Globe width={800} height={800} />
           </div>
@@ -218,8 +217,7 @@ export default function DashboardWithGlobe() {
       />
 
       {!isExpanded && (
-        <div className="mt-5">
-          <CampaignForm onSubmit={handleCampaignSubmit} />
+        <div className="mt-10">
           <QuickActions
             suggestions={defaultSuggestions}
             onSuggestionClick={(text) => {
@@ -227,6 +225,7 @@ export default function DashboardWithGlobe() {
               handleSubmit();
             }}
           />
+          <CampaignForm onSubmit={handleCampaignSubmit} />
         </div>
       )}
     </Layout>

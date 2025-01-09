@@ -2,7 +2,7 @@
 import React from "react";
 import { MessageCircle } from "lucide-react";
 
-const Header = ({ isExpanded }) => (
+const Header = ({ isExpanded }: { isExpanded: boolean }) => (
   <div
     className={`transition-all duration-500 ease-out transform ${
       isExpanded
@@ -22,7 +22,7 @@ const Header = ({ isExpanded }) => (
       </div>
     </div>
     <main className="max-w-4xl mx-auto px-6 pt-16 text-center">
-      <h1 className="text-6xl font-extrabold mb-6 leading-tight bg-gradient-to-r from-white via-blue-400 to-purple-500 bg-clip-text text-transparent">
+      <h1 className="text-6xl font-extrabold -mt-10 mb-6 leading-tight bg-gradient-to-r from-white via-blue-400 to-purple-500 bg-clip-text text-transparent">
         Your Social Media Intelligence Hub
       </h1>
       <p className="text-gray-300 text-xl mb-12 hover:text-white transition-colors duration-300">
